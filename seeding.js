@@ -39,33 +39,49 @@ const toggleDb = async (boolean) => {
   }
 }
 
+const establishUuidsQuery = `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`;
+
 // base table queries 
-const createUserTableQuery = `CREATE TABLE IF NOT EXISTS users (
-  Users int,
-  LastName varchar(255),
-  FirstName varchar(255),
-  Birthday varchar(6),
-  Street varchar(255),
-  City varchar(255),
-  State varchar(75),
-  Zipcode int
-);`
+const createUserTableQuery = `CREATE TABLE IF NOT EXISTS customers (
+  lastname varchar(255),
+  firstname varchar(255),
+  birthday varchar(6),
+  street varchar(255),
+  city varchar(255),
+  state varchar(75),
+  zipcode int,
+  customer uuid DEFAULT uuid_generate_v4(),
+  CONSTRAINT p_key PRIMARY KEY (customer)
+);`;
+
 
 const createVehicleTableQuery = `CREATE TABLE IF NOT EXISTS vehicles (
-  VIN varchar(225),
-  Year smallint,
-  Make varchar(150),
-  Model varchar(150)
+  vin varchar(225) PRIMARY KEY,
+  year smallint,
+  make varchar(150),
+  model varchar(150)
+);`;
+
+const createUserVehicleJoin = `CREATE TABLE user_vehicle (
+  customer uuid,
+  vin varchar(225),
+  PRIMARY KEY (customer, vin),
+  CONSTRAINT k_user FOREIGN KEY(customer) REFERENCES customers(customer),
+  CONSTRAINT k_vin FOREIGN KEY(vin) REFERENCES vehicles(vin)
 );`;
 
 const createTables = async () => {
   const pool = new Pool(poolConfig);
   try {
     await pool.connect();
+    const uuidAddition = await pool.query(establishUuidsQuery);
     const userTable = await pool.query(createUserTableQuery);
     const vehicleTable = await pool.query(createVehicleTableQuery);
-    console.log(userTable);
-    console.log(vehicleTable);
+    const userVehicleJoin = await pool.query(createUserVehicleJoin);
+    // console.log(uuidAddition);
+    // console.log(userTable);
+    // console.log(vehicleTable);
+    // console.log(userVehicleJoin);
     pool.end();
   } catch (error) {
     console.log('There was an error establishing tables.');
@@ -74,6 +90,7 @@ const createTables = async () => {
   }
 };
 
+// utility during dev for 
 const dropTable = async (tableName) => {
   const client = new Client(clientConfig);
   try {
@@ -88,8 +105,6 @@ const dropTable = async (tableName) => {
   }
 };
 
-
-
 const seed = async () => {
   await toggleDb(false)
   await toggleDb(true);
@@ -97,4 +112,5 @@ const seed = async () => {
 };
 
 seed();
+
   
