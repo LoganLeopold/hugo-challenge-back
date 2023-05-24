@@ -1,4 +1,9 @@
 const { Pool, Client } = require('pg');
+const { 
+  addCustomer, 
+  addCustomerVehicleBind, 
+  addVehicle 
+} = require('./inserts');
 const dotenv = require('dotenv');
 dotenv.config();
   
@@ -76,10 +81,7 @@ const createTables = async () => {
     const userTable = await pool.query(createCustomerTableQuery);
     const vehicleTable = await pool.query(createVehicleTableQuery);
     const userVehicleJoin = await pool.query(createUserVehicleJoin);
-    // console.log(uuidAddition);
-    // console.log(userTable);
-    // console.log(vehicleTable);
-    // console.log(userVehicleJoin);
+    console.log("CREATETABLES END");
     pool.end();
   } catch (error) {
     console.log('There was an error establishing tables.');
@@ -87,86 +89,6 @@ const createTables = async () => {
     pool.end();
   }
 };
-
-// // utility during dev for 
-// const dropTable = async (tableName) => {
-//   const client = new Client(clientConfig);
-//   try {
-//     await client.connect();
-//     const tableDrop = await client.query(`DROP TABLE ${tableName}`);
-//     console.log(tableDrop);
-//     client.end();
-//   } catch (error) {
-//     console.log('There was an error dropping the table.');
-//     console.log(error);
-//     await client.end();
-//   }
-// };
-
-// // Initial data test
-// const addTestData = async (query, values) => {
-//   console.log("TEST DATA");
-//   const pool = new Pool(poolConfig);
-//   try {
-//     const customerAdd = await pool.query(query, values);
-//     console.log(customerAdd.rows[0].customer);
-//     pool.end();
-//   } catch (error) {
-//     pool.end();
-//     console.log(error);
-//   };
-// };
-
-const addCustomer = async (values) => {
-  console.log('addCustomer');
-  console.log(values);
-  const pool = new Pool(poolConfig);
-  const insertCustomerQuery = `
-  INSERT INTO customers (
-    lastname,
-    firstname,
-    birthday,
-    street,
-    city,
-    state,
-    zipcode
-  ) 
-  VALUES ($1, $2, $3, $4, $5, $6, $7)
-  RETURNING customer
-`;
-  try {
-    const customerAdd = await pool.query(insertCustomerQuery, values);
-    console.log(customerAdd.rows[0].customer);
-    pool.end();
-    return customerAdd.rows[0].customer;
-  } catch (error) {
-    pool.end();
-    return error; 
-  };
-}
-
-const addVehicle = async (values) => {
-  const pool = new Pool(poolConfig);
-  const insertVehicleQuery = `
-  INSERT INTO vehicles ( 
-    vin,
-    year,
-    make,
-    model
-  )
-  VALUES ($1, $2, $3, $4)
-  RETURNING vin
-`;
-  try {
-    const vehicleAdd = await pool.query(insertVehicleQuery, values);
-    console.log(vehicleAdd.rows[0].vin);
-    pool.end();
-    return vehicleAdd.rows[0].vin;
-  } catch (error) {
-    pool.end();
-    return error; 
-  };
-}
 
 const insertCustomerValues = [
   'Leopold',
@@ -185,40 +107,19 @@ const insertVehicleValues = [
   'Insight'  
 ]
 
-const addCustomerVehicleBind = async (customer, vin) => {
-  const pool = new Pool(poolConfig);
-  const insertCustomerVehicleBind = `
-    INSERT INTO user_vehicle (
-      customer, 
-      vin
-    )
-    VALUES ($1, $2)
-    RETURNING customer, vin
-  `;
-  try {
-    const customerVehicleAdd = await pool.query(insertCustomerVehicleBind, [customer, vin]);
-    console.log(customerVehicleAdd);
-    pool.end();
-    return customerVehicleAdd;
-  } catch (error) {
-    console.log(error);
-    pool.end();
-    return error;
-  };
-}
-
 const seed = async () => {
-  await toggleDb(false)
+  console.log("SEEEEED");
+  await toggleDb(false);
   await toggleDb(true);
   await createTables();
 
-  
-  const customerUuid = await addCustomer(insertCustomerValues);
-  const vin = await addVehicle(insertVehicleValues);
-  const customerVehicleBind = await addCustomerVehicleBind(customerUuid, vin);
-  console.log(customerVehicleBind);
+  // const customerUuid = await addCustomer(insertCustomerValues);
+  // const vin = await addVehicle(insertVehicleValues);
+  // const customerVehicleBind = await addCustomerVehicleBind(customerUuid, vin);
+  // console.log(customerVehicleBind);
+  console.log("EEEEEEEND SEEEEEED");
 };
 
-seed();
+module.exports = { seed };
 
 
