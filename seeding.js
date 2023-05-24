@@ -81,7 +81,6 @@ const createTables = async () => {
     const userTable = await pool.query(createCustomerTableQuery);
     const vehicleTable = await pool.query(createVehicleTableQuery);
     const userVehicleJoin = await pool.query(createUserVehicleJoin);
-    console.log("CREATETABLES END");
     pool.end();
   } catch (error) {
     console.log('There was an error establishing tables.');

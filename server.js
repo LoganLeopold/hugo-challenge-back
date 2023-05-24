@@ -1,4 +1,5 @@
 const express = require('express');
+const { seed } = require('./seeding');
 const { Pool, Client } = require('pg');
 const { 
   addCustomer, 
@@ -18,20 +19,21 @@ server.get('/test', async (req, res) => {
   res.json({data: "Saaaaah brah"});
 });
 
-// const testApi = async () => {
-//   let res = await axios.get('http://localhost:3001/test');
-//   console.log(res.data);
-// };
+const poolConfig = {
+  host: process.env.PGHOST,
+  user: process.env.PGUSER,
+  database: process.env.TARGET_DB,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT,
+};
 
 // new application - returns resume route
 server.post('/application', async (req, res) => {
   const newCustomer = await addCustomer(Object.values(req.body.data.customer));
-  console.log(newCustomer)
   res.send(
     "Resume link here"
   );
 });
-
 
 const testCustomerData = {
   lastname: 'Leopold',
@@ -41,21 +43,20 @@ const testCustomerData = {
   city: 'Washington',
   state: 'District of Columbia',
   zipcode: 20003
-}
+};
 
 const testVehicleData = {
   vin: 'TJ45HJKJHJK123432', 
   year: '2010', 
   make: 'Honda', 
   model: 'Insight'  
-}
+};
 
 server.listen(process.env.APP_PORT, async () => {
   console.log(`Example app listening on port ${process.env.APP_PORT}`);
 });
 
 const testPost = async () => {
-  const tables = await tryTables()
   console.log("TEST POST");
   let res = await axios.post('http://localhost:3001/application', {
     data: {
@@ -63,7 +64,6 @@ const testPost = async () => {
       vehicle: testVehicleData
     }
   });
-  // console.log(res.data);
 };
 
 module.exports = { server, testPost }

@@ -1,5 +1,6 @@
 const { Pool, Client } = require('pg');
-
+const dotenv = require('dotenv');
+dotenv.config();
 // const clientConfig = {
 //   host: process.env.PGHOST,
 //   user: process.env.PGUSER,
@@ -19,7 +20,9 @@ const tryTables = async () => {
   const pool = new Pool(poolConfig);
   const tryTables = `
   SELECT *
-  FROM pg_catalog.pg_tables;
+  FROM pg_catalog.pg_tables
+  WHERE schemaname != 'pg_catalog' AND 
+    schemaname != 'information_schema';
  `;
  try {
   const tables = await pool.query(tryTables);
