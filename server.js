@@ -1,13 +1,8 @@
 const express = require('express');
-const { seed } = require('./seeding');
 const { Pool, Client } = require('pg');
-const { 
-  addCustomer, 
-  addCustomerVehicleBind, 
-  addVehicle, 
-  tryTables
-} = require('./inserts');
-const axios = require('axios');
+const { seed } = require('./db/seeding/seeder');
+const inserts = require('./db/utils/inserts');
+const queries = require('./db/utils/queries');
 const dotenv = require('dotenv');
 
 // establish server
@@ -19,51 +14,35 @@ server.get('/test', async (req, res) => {
   res.json({data: "Saaaaah brah"});
 });
 
-const poolConfig = {
-  host: process.env.PGHOST,
-  user: process.env.PGUSER,
-  database: process.env.TARGET_DB,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
-};
-
 // new application - returns resume route
 server.post('/application', async (req, res) => {
-  const newCustomer = await addCustomer(Object.values(req.body.data.customer));
-  res.send(
-    "Resume link here"
-  );
+  try {
+    const newCustomer = await inserts.addCustomer(Object.values(req.body.data.customer));
+    const newVehicle = await inserts.addVehicle(Object.values(req.body.data.vehicle));
+    const newApplication = await inserts.addApplication();
+    const newCustomerVehicleBind = await inserts.addCustomerVehicleBind(newCustomer, newVehicle);
+    const newCustomerApplicationBind = await inserts.addCustomerApplicationBind(newCustomer, newApplication);
+    const newVehicleApplicationBind = await inserts.addVehicleApplicationBind(newVehicle, newApplication);
+    res.send(
+      "Resume link here"
+    );
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-const testCustomerData = {
-  lastname: 'Leopold',
-  firstname: 'Logan',
-  birthday: '09/24/1990',
-  street: '319 10th ST SE APT 1',
-  city: 'Washington',
-  state: 'District of Columbia',
-  zipcode: 20003
-};
-
-const testVehicleData = {
-  vin: 'TJ45HJKJHJK123432', 
-  year: '2010', 
-  make: 'Honda', 
-  model: 'Insight'  
-};
+server.get('/application/:id', async (req, res) => {
+  const applicationId = req.params.id;
+  try {
+    const applicationData = await queries.getApplicationData(applicationId);
+    res.json(applicationData);
+  } catch (error) {
+    res.json(error);
+  };
+});
 
 server.listen(process.env.APP_PORT, async () => {
   console.log(`Example app listening on port ${process.env.APP_PORT}`);
 });
 
-const testPost = async () => {
-  console.log("TEST POST");
-  let res = await axios.post('http://localhost:3001/application', {
-    data: {
-      customer: testCustomerData,
-      vehicle: testVehicleData
-    }
-  });
-};
-
-module.exports = { server, testPost }
+module.exports = { server }
