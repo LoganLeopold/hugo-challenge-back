@@ -183,9 +183,8 @@ const addApplicationWhole = async (customerUuid, vehicleArray) => {
     const newApplication = await addEmptyApplication();
     const newCustomer = await addCustomer(customerUuid);
     const newCustomerApplicationBind = await addCustomerApplicationBind(newCustomer, newApplication);
-    await Promise.all(vehicleArray.map( async vehicleValues => {
-      await bindVehicle(vehicleValues, newCustomer, newApplication);
-    }));
+    await Promise.all(vehicleArray.map( async vehicleValues => await bindVehicle(vehicleValues, newCustomer, newApplication) ));
+    return newApplication;
   } catch (error) {
     return error; 
   }
