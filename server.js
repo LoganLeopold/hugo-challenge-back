@@ -26,6 +26,8 @@ server.post('/application/new', async (req, res) => {
 });
 
 server.get('/application/:id', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   const applicationId = req.params.id;
   try {
     const applicationData = await queries.getApplicationData(applicationId);
