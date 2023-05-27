@@ -58,7 +58,7 @@ const testPut = async (update) => {
 const app = async () => {
   // await seed();  
   
-  const completedTestUpdate = await testPut(testUpdate);
+  // const completedTestUpdate = await testPut(testUpdate);
 }
 
 app();

@@ -27,7 +27,7 @@ const createReturnStatement = (keyValues) => {
   }, '');
 };
 
-const updateCustomer = async (uuid, keyValues) => {
+const updateCustomer = async (customerUuid, keyValues) => {
   const pool = new Pool(poolConfig);
   const setStatement = createSetStatement(keyValues);
   const returnStatement = createReturnStatement(keyValues);
@@ -37,12 +37,10 @@ const updateCustomer = async (uuid, keyValues) => {
     RETURNING ${returnStatement}
   `;
   try {
-    const updatedCustomer = await pool.query(updateCustomerQuery, [...Object.values(keyValues), uuid]);    
-    if (updatedCustomer.rows.length > 0) {
-      console.log(updatedCustomer.rows[0]);
+    const updatedCustomer = await pool.query(updateCustomerQuery, [...Object.values(keyValues), customerUuid]);    
+    if (updatedCustomer.rows.length > 0) {;
       return updatedCustomer.rows[0];
     };
-    // console.log(updatedCustomer);
   } catch (error) {
     return error;
   }

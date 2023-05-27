@@ -26,15 +26,33 @@ const getApplicationData = async (applicationId) => {
     const customer = await pool.query(getAppCustomerQuery);
     const vehicle = await pool.query(getAppVehicleQuery);
     return {
-      customer: customer.rows,
-      vehicles: vehicle.rows
+      customer: customer.rows[0],
+      vehicles: vehicle.rows,
+      application: customer.rows[0].application
     }
   } catch (error) {
     console.log("GET APPLICATION ERROR");
     console.log(error);
+    return error;
+  }
+}
+
+const getAllApplications = async() => {
+  const pool = new Pool(poolConfig);
+  const getAllAppsQuery = `
+    SELECT * 
+    FROM customer_application c_a
+      JOIN customers c ON c_a.customer = c.customer
+  `;
+  try {
+    const allApps = await pool.query(getAllAppsQuery)
+    return allApps;
+  } catch (error) {
+    return error;
   }
 }
 
 module.exports = {
   getApplicationData,
+  getAllApplications
 }
