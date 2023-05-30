@@ -94,6 +94,7 @@ const addEmptyApplication = async () => {
     return error; 
   };
 };
+
 const addCustomerVehicleBind = async (customer, vin) => {
   const pool = new Pool(poolConfig);
   const insertCustomerVehicleBind = `
