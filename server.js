@@ -32,7 +32,7 @@ server.get('/applications/all', async (req,res) => {
 server.post('/application/new', async (req, res) => {
   try {
     const newApp = inserts.addApplicationWhole(req.body.data.customer, req.body.data.vehicles);
-    res.json({data: newApp});
+    res.json({data: `http://127.0.0.1:3000/application:${newApp}`});
   } catch (error) {
     res.send(error);
   }
