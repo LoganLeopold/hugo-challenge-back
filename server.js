@@ -5,6 +5,7 @@ const inserts = require('./db/utils/inserts');
 const queries = require('./db/utils/queries');
 const updates = require('./db/utils/updates');
 const dotenv = require('dotenv');
+const { validateApp } = require('./db/utils/validations');
 
 // establish server
 const server = express();
@@ -18,6 +19,9 @@ server.use((req, res, next) => {
   next();
 })
 
+/*
+  GETS
+*/
 // get all applications
 server.get('/applications/all', async (req,res) => {
   try {
@@ -27,6 +31,22 @@ server.get('/applications/all', async (req,res) => {
     res.send(error);
   };
 });
+
+// get an individual application
+server.get('/application/:id', async (req, res) => {
+  const applicationId = req.params.id;
+  try {
+    const applicationData = await queries.getApplicationData(applicationId);
+    res.json(applicationData);
+  } catch (error) {
+    res.json(error);
+  };
+});
+
+
+/*
+  POSTS
+*/
 
 // new application - returns resume route
 server.post('/application/new', async (req, res) => {
@@ -38,18 +58,21 @@ server.post('/application/new', async (req, res) => {
   }
 });
 
-server.get('/application/:id', async (req, res) => {
-  const applicationId = req.params.id;
+server.post('/application/submit', async (req, res) => {
   try {
-    const applicationData = await queries.getApplicationData(applicationId);
-    res.json(applicationData);
-  } catch (error) {
-    res.json(error);
-  };
-});
+    const valid = validateApp(req.body.data);
+    if (valid) { res.send(Math.random() * 100) }
+    else { return {error: "Some fields are not valid."}}
+  } catch (error) { 
+    res.send(error);
+  }
+})
 
+/* 
+  PUTS
+*/
+// Update an application by fields
 server.put('/application/:id', async (req, res) => {
-  // const id = req.params.id;
   /*
     req.body: Arrays by document type containing documents by uuid/vin and their row updates (as keyValues).
     ** At the moment - FE is onyl sending one ~customer~

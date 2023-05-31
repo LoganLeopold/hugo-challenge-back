@@ -46,7 +46,6 @@ const validateCustomer = (customerObject) => {
       break;
     }
   }
-  console.log(`Customer validLengths: ${validLengths}`)
 
   // birthday
   let validBirthday = true;
@@ -70,14 +69,10 @@ const validateCustomer = (customerObject) => {
     
   if (age < 16) validBirthday === false;
 
-  console.log(`Customer validBirthday: ${validBirthday}`)
-
   // zipcode
   let validZipcode = true;
   const zipcode = customerObject['zipcode'];
-  if (typeof zipcode != 'number' || zipcode > 99999) validZipcode = false
-  console.log(`Customer validZipcode: ${validZipcode}`);
-  console.log(`Customer result: ${validLengths && validBirthday && validZipcode}`)
+  if (isNaN(zipcode) || zipcode > 99999) validZipcode = false
 
   return validLengths && validBirthday && validZipcode;
 }
@@ -102,20 +97,15 @@ const validateVehicle = (vehicleObject) => {
     }
   }
 
-  console.log(`Vehicle ${vehicleObject.vin} validLengths: ${validLengths}`)
-
   // year
   let validYear = true;
   let year = vehicleObject.year;
-  if (year > new Date().getFullYear() || year < 1900) validYear = false;
-  console.log(`Vehicle ${vehicleObject.vin} validYear: ${validYear}`)
-  console.log(`Vehicle ${vehicleObject.vin} result: ${validLengths && validYear}`)
+  if (year > new Date().getFullYear() + 1 || year < 1985) validYear = false;
   
   return validLengths && validYear;
 }
 
 const validateApp = (appBody) => {
-  // console.log(appBody);
   const { customer, vehicles } =  appBody;
   const validCustomer = validateCustomer(customer);
   const vehicleAssesments = vehicles.map( (vehicle) => {
@@ -125,8 +115,6 @@ const validateApp = (appBody) => {
   const validVehicles = !vehicleAssesments.includes(false);
   return validCustomer && validVehicles;
 }
-
-console.log(validateApp(dummyApp));
 
 module.exports = {
   validateApp
