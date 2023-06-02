@@ -25,9 +25,14 @@ const getApplicationData = async (applicationId) => {
   try {
     const customer = await pool.query(getAppCustomerQuery);
     const vehicle = await pool.query(getAppVehicleQuery);
+    const vehicleObj = {}
+    for (let i = 0; i < vehicle.rows.length; i++) {
+      let thisVehicle = vehicle.rows[i];
+      vehicleObj[thisVehicle.vin] = thisVehicle
+    }
     return {
       customer: customer.rows[0],
-      vehicles: vehicle.rows,
+      vehicles: vehicleObj,
       application: customer.rows[0].application
     }
   } catch (error) {
