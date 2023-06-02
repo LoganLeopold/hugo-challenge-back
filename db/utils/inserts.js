@@ -46,7 +46,6 @@ const addCustomer = async (values) => {
 `;
   try {
     const customerAdd = await pool.query(insertCustomerQuery, values);
-    console.log(customerAdd.rows[0].customer);
     return customerAdd.rows[0].customer;
   } catch (error) {
     console.log("CUSTOMER ERROR");
@@ -68,7 +67,6 @@ const addVehicle = async (values) => {
 `;
   try {
     const vehicleAdd = await pool.query(insertVehicleQuery, values);
-    console.log(vehicleAdd.rows[0].vin);
     return vehicleAdd.rows[0].vin;
   } catch (error) {
     console.log("VEHICLE ERROR");
@@ -86,7 +84,6 @@ const addEmptyApplication = async () => {
 `;
   try {
     const applicationAdd = await pool.query(insertApplicationQuery);
-    console.log(...Object.entries(applicationAdd));
     return applicationAdd.rows[0].application;
   } catch (error) {
     console.log("APPLICATION ADD ERROR");
@@ -127,7 +124,6 @@ const addCustomerApplicationBind = async (customer, application) => {
   `;
   try {
     const customerApplicationAdd = await pool.query(insertCustomerApplicationBind, [customer, application]);
-    console.log(customerApplicationAdd);
     return customerApplicationAdd;
   } catch (error) {
     console.log("CUSTOMER > APPLICATION BIND ERROR");
@@ -148,7 +144,6 @@ const addVehicleApplicationBind = async (vin, application) => {
   `;
   try {
     const vehicleApplicationAdd = await pool.query(insertVehicleApplicationBind, [vin, application]);
-    console.log(vehicleApplicationAdd);
     return vehicleApplicationAdd;
   } catch (error) {
     console.log("VEHICLE > APPLICATION BIND ERROR");
