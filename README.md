@@ -30,7 +30,7 @@ I established an .env file per convention. My sample file is down below. A few n
 3. TARGET_DB hugo is the DB that is created in your local Postgres environment. **If there is already a database by that name, IT WILL BE DROPPED.**
 
 PGUSER=loganleopold  
-PGPASSWORD=<redacted>  
+PGPASSWORD=**redacted**  
 PGHOST=localhost  
 PGPORT=5432  
 TARGET_DB=hugo
@@ -40,5 +40,5 @@ APP_PORT=3001
 1. Run your git clone in the directory of your choice. 
 2. cd into project root 
 3. npm install the dependencies
-4. Use "npm run start" from the command line to start the server.
+4. Use "npm run start" from the command line in the root of the project to start the server.
 5. Open/refresh the [React App](https://github.com/LoganLeopold/hugo-challenge-front) to see the FE populated with your local seeded Postgres DB. 
