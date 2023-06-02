@@ -107,7 +107,6 @@ const addCustomerVehicleBind = async (customer, vin) => {
   `;
   try {
     const customerVehicleAdd = await pool.query(insertCustomerVehicleBind, [customer, vin]);
-    console.log(customerVehicleAdd);
     return customerVehicleAdd;
   } catch (error) {
     console.log("CUSTOMER > VEHICLE BIND ERROR");
@@ -158,10 +157,11 @@ const addVehicleApplicationBind = async (vin, application) => {
   };
 }
 
-const bindVehicle = async (vehicleValues, customerUuid, applicationValues) => {
+const bindVehicle = async (vehicleValues, customerUuid, applicationUuid) => {
   const newVehicle = await addVehicle(vehicleValues);
   const newCustomerVehicleBind = await addCustomerVehicleBind(customerUuid, newVehicle);
-  const newVehicleApplicationBind = await addVehicleApplicationBind(newVehicle, applicationValues);
+  const newVehicleApplicationBind = await addVehicleApplicationBind(newVehicle, applicationUuid);
+  return newVehicle;
 };
 
 const addApplicationWhole = async (customerUuid, vehicleArray) => {
@@ -184,5 +184,6 @@ module.exports = {
   addCustomerVehicleBind,
   addCustomerApplicationBind,
   addVehicleApplicationBind,
+  bindVehicle,
   tryTables,
 }

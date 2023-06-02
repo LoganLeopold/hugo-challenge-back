@@ -2,7 +2,8 @@ const express = require('express');
 const { Pool, Client } = require('pg');
 const inserts = require('./db/utils/inserts');
 const queries = require('./db/utils/queries');
-const updates = require('./db/utils/updates')
+const updates = require('./db/utils/updates');
+const deletes = require('./db/utils/deletes');
 const dotenv = require('dotenv');
 const { validateApp } = require('./db/utils/validations');
 
@@ -14,7 +15,7 @@ dotenv.config();
 server.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   next();
 })
 
@@ -56,20 +57,37 @@ server.post('/application/new', async (req, res) => {
   }
 });
 
+// Validate app and simulate price return
 server.post('/application/submit', async (req, res) => {
+  const valid = validateApp(req.body);
+  if (valid) { 
+    res.json({price: Math.random() * 100}) 
+  } else { 
+    res.json({error: "Some fields are not valid."}) 
+  }
+})
+
+server.post('/vehicle/new', async (req, res) => {
   try {
-    const valid = validateApp(req.body.data);
-    if (valid) { res.send(Math.random() * 100) }
-    else { return {error: "Some fields are not valid."}}
-  } catch (error) { 
-    res.send(error);
+    /*
+      format req.body to be key-value pairs:
+      {
+        vehicle: { vin, year, make, model },
+        customer: customerUuid,
+        application: applicationUuid
+      }
+    */
+    const { vehicle, customer, application } = req.body
+    const newVehicle = await inserts.bindVehicle(Object.values(vehicle), customer, application)
+    res.json({vin: newVehicle});
+  } catch (error) {
+    res.json(error);
   }
 })
 
 /* 
   PUTS
 */
-
 // Update an application by fields
 server.put('/application/:id', async (req, res) => {
   /*
@@ -106,7 +124,17 @@ server.put('/vehicle/:id', async (req, res) => {
   res.json(updatedVehicle);
 })
 
+/* 
+  DELETES
+*/
+server.delete('/vehicle/:id', async (req, res) => {
+  const deletedVehicle = await deletes.deleteVehicle(req.params.id)
+  res.json("success");
+})
 
+/* 
+  ESTABLISH SERVER
+*/
 server.listen(process.env.APP_PORT, async () => {
   console.log(`Example app listening on port ${process.env.APP_PORT}`);
 });

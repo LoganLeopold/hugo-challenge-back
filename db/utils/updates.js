@@ -37,7 +37,7 @@ const updateCustomer = async (customerUuid, keyValues) => {
   `;
   try {
     const updatedCustomer = await pool.query(updateCustomerQuery, [...Object.values(keyValues), customerUuid]);    
-    if (updatedCustomer.rows.length > 0) {;
+    if (updatedCustomer.rows.length > 0) {
       return updatedCustomer.rows[0];
     };
   } catch (error) {

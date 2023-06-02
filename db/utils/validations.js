@@ -106,7 +106,7 @@ const validateVehicle = (vehicleObject) => {
 }
 
 const validateApp = (appBody) => {
-  const { customer, vehicles } =  appBody;
+  const { customer, vehicles } = appBody;
   const validCustomer = validateCustomer(customer);
   const vehicleAssesments = vehicles.map( (vehicle) => {
     const valid = validateVehicle(vehicle);
