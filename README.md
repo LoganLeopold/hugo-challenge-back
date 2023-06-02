@@ -11,7 +11,7 @@ This project will require an open connection to a Postgres DB on your local mach
 I also downloaded [Postico]() to have a GUI. You can configure the access very easily using all the same info that will be provided in the environment variable below. Postgres runs on port 5432 by default, and Postico listens there by default as well. 
 
 #### Data note:
-I provided some seed data. DEFINITELY not historical or personal to me in any way. Just oddly specific. The DB should be seeded upon the below NPM command and you should be able to then start the FE react app and get it to load the appropriate data from this server. 
+I provided some seed data. DEFINITELY not historical or personal to me in any way.... Just oddly specific... The DB should be seeded upon the below NPM command and you should be able to then start the FE react app and get it to load the appropriate data from this server. 
 
 ### 2. NPM 
 
@@ -29,10 +29,10 @@ I established an .env file per convention. My sample file is down below. A few n
 
 3. TARGET_DB hugo is the DB that is created in your local Postgres environment. **If there is already a database by that name, IT WILL BE DROPPED.**
 
-PGUSER=loganleopold
-PGPASSWORD=<redacted>
-PGHOST=localhost
-PGPORT=5432
+PGUSER=loganleopold  
+PGPASSWORD=<redacted>  
+PGHOST=localhost  
+PGPORT=5432  
 TARGET_DB=hugo
 APP_PORT=3001
 
