@@ -1,6 +1,5 @@
 const { Pool, Client } = require('pg');
 const dotenv = require('dotenv');
-const { all } = require('axios');
 dotenv.config();
 
 const poolConfig = {

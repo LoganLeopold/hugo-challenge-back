@@ -1,9 +1,8 @@
 const express = require('express');
 const { Pool, Client } = require('pg');
-const { seed } = require('./db/seeding/seeder');
 const inserts = require('./db/utils/inserts');
 const queries = require('./db/utils/queries');
-const updates = require('./db/utils/updates');
+const updates = require('./db/utils/updates')
 const dotenv = require('dotenv');
 const { validateApp } = require('./db/utils/validations');
 
@@ -47,7 +46,6 @@ server.get('/application/:id', async (req, res) => {
 /*
   POSTS
 */
-
 // new application - returns resume route
 server.post('/application/new', async (req, res) => {
   try {
@@ -71,16 +69,11 @@ server.post('/application/submit', async (req, res) => {
 /* 
   PUTS
 */
+
 // Update an application by fields
 server.put('/application/:id', async (req, res) => {
   /*
     req.body: Arrays by document type containing documents by uuid/vin and their row updates (as keyValues).
-    ** At the moment - FE is onyl sending one ~customer~
-    ** At the moment - FE is only sending one key-value update per document at a time (Object.keys(keyValue).length === 1)
-    {
-      customer: [ { customer: customerUuid, keyValues: { key: value, key: value } } ]
-      vehicles: [ { vin: vin,           keyValues: { key, value             } } ]
-    }
   */ 
   try {
     const { customer, vehicles } = req.body;
@@ -102,6 +95,17 @@ server.put('/application/:id', async (req, res) => {
     res.send(error);
   }
 })
+
+server.put('/customer/:id', async (req, res) => {
+  const updatedCustomer = await updates.updateCustomer(req.params.id, req.body);
+  res.json(updatedCustomer)
+})
+
+server.put('/vehicle/:id', async (req, res) => {
+  const updatedVehicle = await updates.updateVehicle(req.params.id, req.body);
+  res.json(updatedVehicle);
+})
+
 
 server.listen(process.env.APP_PORT, async () => {
   console.log(`Example app listening on port ${process.env.APP_PORT}`);
